@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071735">
+  <title>Laboratorio de Investigación Operativa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <a class="marca" href="#inicio" aria-label="Ir al inicio">
+      <span class="marca-simbolo" aria-hidden="true">IO</span>
+      <span><strong>Investigación Operativa</strong><small>Laboratorio de modelado</small></span>
+    </a>
+    <nav aria-label="Navegación principal">
+      <a class="activo" href="#inicio">Inicio</a>
+      <a href="#calculadoras">Calculadoras</a>
+      <a href="#proyecto">El proyecto</a>
+    </nav>
+    <a class="acceso-directo" href="metodos/pert-cpm/index.html">Abrir PERT–CPM <span>↗</span></a>
+  </header>
+
+  <main>
+    <section id="inicio" class="portada">
+      <div class="malla" aria-hidden="true"></div>
+      <div class="orbe orbe-uno" aria-hidden="true"></div>
+      <div class="orbe orbe-dos" aria-hidden="true"></div>
+      <div class="contenido-portada">
+        <div class="texto-portada">
+          <p class="etiqueta"><span></span> Ingeniería de Sistemas e Informática</p>
+          <h1>Modelos complejos,<br><em>decisiones claras.</em></h1>
+          <p class="bajada">Herramientas académicas interactivas para comprender, calcular y explicar modelos de Investigación Operativa paso a paso.</p>
+          <div class="acciones-portada">
+            <a class="boton boton-primario" href="#calculadoras">Explorar calculadoras <span>↓</span></a>
+            <a class="boton boton-secundario" href="metodos/pert-cpm/index.html">Iniciar proyecto PERT–CPM</a>
+          </div>
+          <dl class="metricas">
+            <div><dt>02</dt><dd>Métodos operativos</dd></div>
+            <div><dt>100%</dt><dd>Desarrollo visible</dd></div>
+            <div><dt>AON</dt><dd>Red interactiva</dd></div>
+          </dl>
+        </div>
+
+        <div class="visual-portada" aria-label="Vista previa de una red de proyecto">
+          <div class="halo"></div>
+          <svg viewBox="0 0 650 500" role="img" aria-label="Actividades conectadas de un proyecto">
+            <defs>
+              <linearGradient id="linea" x1="0" x2="1"><stop stop-color="#53e6c1"/><stop offset="1" stop-color="#8ca6ff"/></linearGradient>
+              <filter id="brillo"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g class="conexiones" fill="none" stroke="url(#linea)" stroke-width="3">
+              <path d="M105 248 C175 248 166 126 240 126"/><path d="M105 248 C175 248 166 372 240 372"/><path d="M344 126 C425 126 401 248 480 248"/><path d="M344 372 C425 372 401 248 480 248"/>
+            </g>
+            <g class="nodo nodo-inicio"><circle cx="82" cy="248" r="24"/><text x="82" y="254">I</text></g>
+            <g class="nodo"><rect x="240" y="89" width="104" height="74" rx="14"/><text x="292" y="119">A</text><text class="dato" x="292" y="144">0 · 4 · 4</text></g>
+            <g class="nodo"><rect x="240" y="335" width="104" height="74" rx="14"/><text x="292" y="365">B</text><text class="dato" x="292" y="390">0 · 3 · 3</text></g>
+            <g class="nodo nodo-critico"><rect x="480" y="211" width="116" height="74" rx="14"/><text x="538" y="241">C</text><text class="dato" x="538" y="266">4 · 5 · 9</text></g>
+          </svg>
+          <div class="tarjeta-flotante"><span>Ruta crítica</span><strong>A → C → E</strong><small>Duración esperada: 23.33 días</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calculadoras" class="seccion calculadoras">
+      <div class="cabecera-seccion">
+        <div><p class="etiqueta etiqueta-oscura">Colección académica</p><h2>Calculadoras que explican<br>cada resultado.</h2></div>
+        <p>No son cajas negras: cada herramienta muestra el modelo, el procedimiento y la interpretación para facilitar el aprendizaje.</p>
+      </div>
+      <div class="rejilla-metodos">
+        <a class="tarjeta-metodo metodo-activo" href="metodos/pert-cpm/index.html">
+          <div class="estado"><span></span> Disponible</div><div class="icono-metodo">↗</div>
+          <p>Gestión de proyectos</p><h3>PERT <span>–</span> CPM</h3>
+          <p class="descripcion">Tiempos tempranos y tardíos, holguras, rutas críticas, probabilidad y red AON interactiva.</p>
+          <div class="caracteristicas"><span>CPM</span><span>PERT</span><span>LaTeX</span></div>
+          <strong class="enlace-metodo">Abrir calculadora <span>→</span></strong>
+        </a>
+        <a class="tarjeta-metodo metodo-activo" href="metodos/inventarios/index.html">
+          <div class="estado"><span></span> Disponible</div><div class="icono-metodo">Q</div>
+          <p>Optimización</p><h3>Inventarios</h3>
+          <p class="descripcion">Lote económico, punto de reorden, costos, escenarios y política de reabastecimiento.</p>
+          <div class="caracteristicas"><span>EOQ</span><span>Costos</span><span>LaTeX</span></div>
+          <strong class="enlace-metodo">Abrir calculadora <span>→</span></strong>
+        </a>
+        <article class="tarjeta-metodo metodo-proximo">
+          <div class="estado">En preparación</div><div class="icono-metodo">Δ</div>
+          <p>Análisis estratégico</p><h3>Decisiones</h3>
+          <p class="descripcion">Criterios bajo incertidumbre, árboles de decisión y valor esperado.</p>
+          <div class="caracteristicas"><span>Riesgo</span><span>Árboles</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="proyecto" class="seccion manifiesto">
+      <p class="etiqueta">Diseñado para aprender</p>
+      <h2>Del dato a la decisión,<br><em>sin saltarse el razonamiento.</em></h2>
+      <div class="pilares">
+        <article><span>01</span><h3>Datos flexibles</h3><p>Ingreso dinámico, pegado masivo y guardado local del proyecto.</p></article>
+        <article><span>02</span><h3>Procedimiento claro</h3><p>Fórmulas, sustitución numérica y resultados renderizados con LaTeX.</p></article>
+        <article><span>03</span><h3>Lectura visual</h3><p>Diagramas conectados y códigos de color que revelan la ruta crítica.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="marca marca-pie"><span class="marca-simbolo">IO</span><span><strong>Investigación Operativa</strong><small>Proyecto académico</small></span></div>
+    <p>Herramientas para modelar, comprender y decidir.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#071735">
+  <title>PERT–CPM | Investigación Operativa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"]] },
+      svg: { fontCache: "global" },
+      startup: { typeset: false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+  <script src="pert-cpm.js" defer></script>
+</head>
+<body>
+  <header class="cabecera-aplicacion">
+    <a class="marca" href="../../index.html" aria-label="Volver al inicio">
+      <span class="marca-simbolo" aria-hidden="true">IO</span>
+      <span><strong>Investigación Operativa</strong><small>Laboratorio de modelado</small></span>
+    </a>
+    <nav aria-label="Navegación principal">
+      <a href="../../index.html">Inicio</a>
+      <a class="activo" href="../../index.html#calculadoras">Calculadoras</a>
+      <a href="../../index.html#proyecto">El proyecto</a>
+    </nav>
+    <span class="identificador-modulo">PERT <b>–</b> CPM</span>
+  </header>
+
+  <section class="cabecera-modulo">
+    <div>
+      <p class="etiqueta"><span></span> Planificación de proyectos</p>
+      <h1>PERT <em>–</em> CPM</h1>
+      <p>Modele precedencias, identifique rutas críticas y compruebe cada cálculo del proyecto.</p>
+    </div>
+    <ol class="flujo" aria-label="Flujo de trabajo">
+      <li class="activo"><span>01</span> Datos</li>
+      <li><span>02</span> Red</li>
+      <li><span>03</span> Análisis</li>
+    </ol>
+  </section>
+
+  <main class="espacio-trabajo">
+    <section class="panel panel-entrada" aria-labelledby="titulo-datos">
+      <div class="encabezado-panel">
+        <div>
+          <p class="sobretitulo">Hoja de actividades</p>
+          <h2 id="titulo-datos">Datos del proyecto</h2>
+          <p class="descripcion-panel">Edite las actividades aquí o pegue una tabla completa desde Excel.</p>
+        </div>
+        <div class="configuracion">
+          <label for="tipo">Método
+            <select id="tipo">
+              <option value="cpm">CPM · Determinístico</option>
+              <option value="pert">PERT · Tres estimaciones</option>
+            </select>
+          </label>
+          <label id="grupo-plazo" for="plazo" hidden>Plazo objetivo
+            <span class="entrada-unidad"><input id="plazo" type="number" min="0" step="any" placeholder="30"><span>días</span></span>
+          </label>
+          <span class="indicador-guardado" title="Guardado automático"><i></i> Guardado local</span>
+        </div>
+      </div>
+
+      <div class="barra-datos">
+        <div class="grupo-herramientas">
+          <button id="agregar" type="button" class="boton boton-secundario">＋ Fila</button>
+          <button id="abrir-carga" type="button" class="boton boton-terciario">▦ Pegar</button>
+          <button id="importar-csv" type="button" class="boton boton-terciario">↑ CSV</button>
+          <button id="exportar-csv" type="button" class="boton boton-terciario">↓ CSV</button>
+          <input id="archivo-csv" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
+        </div>
+        <div class="grupo-herramientas">
+          <button id="ejemplo" type="button" class="boton boton-terciario">↻ Ejemplo</button>
+          <button id="limpiar" type="button" class="boton boton-terciario boton-peligro">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="ayuda-contextual"><span>i</span><p>Use <strong>Tab</strong> o <strong>Enter</strong> para avanzar. Predecesoras: <strong>A, B</strong>. En PERT: <strong>a ≤ m ≤ b</strong>.</p></div>
+
+      <div class="tabla-contenedor tabla-entrada">
+        <table aria-labelledby="titulo-datos">
+          <thead id="encabezados"></thead>
+          <tbody id="actividades"></tbody>
+        </table>
+      </div>
+
+      <p id="mensaje" class="mensaje" role="alert" aria-live="assertive"></p>
+      <div class="pie-entrada">
+        <p id="estado-guardado" class="estado-guardado" aria-live="polite">Cambios guardados automáticamente.</p>
+        <button id="resolver" type="button" class="boton boton-principal">Calcular proyecto <span>→</span></button>
+      </div>
+    </section>
+
+    <section class="area-analisis" aria-label="Análisis del proyecto">
+      <div id="estado-vacio" class="estado-vacio">
+        <span class="paso-inicial">01</span>
+        <div>
+          <p class="sobretitulo">Nuevo análisis</p>
+          <h2>Complete la tabla de actividades</h2>
+          <p>Defina las predecesoras y los tiempos; después pulse <strong>Calcular proyecto</strong>.</p>
+        </div>
+      </div>
+
+      <section id="salida" class="salida" hidden>
+        <div class="encabezado-resultados">
+          <div><p class="sobretitulo">Solución calculada</p><h2>Panorama del proyecto</h2></div>
+          <button id="imprimir" type="button" class="boton boton-terciario">Imprimir informe</button>
+        </div>
+
+        <div class="navegacion-pestanas" role="tablist" aria-label="Vistas del análisis">
+          <button id="pestana-red" class="pestana activo" type="button" role="tab" aria-selected="true" aria-controls="panel-red" data-panel="panel-red"><span>◈</span> Red del proyecto</button>
+          <button id="pestana-gantt" class="pestana" type="button" role="tab" aria-selected="false" aria-controls="panel-gantt" data-panel="panel-gantt" tabindex="-1"><span>▰</span> Gantt</button>
+          <button id="pestana-desarrollo" class="pestana" type="button" role="tab" aria-selected="false" aria-controls="panel-desarrollo" data-panel="panel-desarrollo" tabindex="-1"><span>∑</span> Solución</button>
+        </div>
+
+        <div id="panel-red" class="panel-pestana activo" role="tabpanel" aria-labelledby="pestana-red">
+          <section class="panel panel-red" aria-labelledby="titulo-red">
+            <div class="encabezado-panel encabezado-red">
+              <div><p class="sobretitulo">Actividad en el nodo · AON</p><h2 id="titulo-red">Diagrama de red</h2></div>
+              <div class="acciones-red">
+                <button id="abrir-teoria-red" type="button" class="boton boton-terciario">Teoría y modelo</button>
+                <div class="controles-red" aria-label="Controles del diagrama">
+                  <button id="alejar-red" type="button" aria-label="Alejar diagrama">−</button><button id="restablecer-red" type="button">Ajustar</button><output id="escala-red" aria-live="polite">100%</output><button id="acercar-red" type="button" aria-label="Acercar diagrama">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="leyenda-red"><span><i class="muestra muestra-critica"></i> Ruta crítica</span><span><i class="muestra muestra-normal"></i> Con holgura</span><span>IT · Duración · FT / ITa · Holgura · FTa</span><span class="ayuda-nodos">Seleccione un nodo para ver su cálculo</span></div>
+            <div id="red" class="red" tabindex="0" aria-label="Diagrama desplazable de la red del proyecto"></div>
+          </section>
+          <section class="panel rutas-compactas" aria-labelledby="titulo-rutas">
+            <div class="encabezado-panel"><div><p class="sobretitulo">Secuencias determinantes</p><h2 id="titulo-rutas">Rutas críticas</h2></div></div>
+            <div id="rutas-criticas" class="lista-rutas"></div>
+          </section>
+        </div>
+
+        <div id="panel-gantt" class="panel-pestana" role="tabpanel" aria-labelledby="pestana-gantt" hidden>
+          <section class="panel panel-gantt" aria-labelledby="titulo-gantt">
+            <div class="encabezado-panel encabezado-gantt">
+              <div>
+                <p class="sobretitulo">Calendario temprano</p>
+                <h2 id="titulo-gantt">Diagrama de Gantt</h2>
+                <p class="descripcion-panel">Cada escenario recalcula los inicios según sus propias duraciones.</p>
+              </div>
+              <div class="acciones-gantt">
+                <label class="selector-escenario" for="escenario-gantt">Escenario
+                  <select id="escenario-gantt">
+                    <option value="esperado">Tiempo esperado</option>
+                    <option value="optimista">Optimista (a)</option>
+                    <option value="probable">Más probable (m)</option>
+                    <option value="pesimista">Pesimista (b)</option>
+                  </select>
+                </label>
+                <div class="controles-red" aria-label="Controles del diagrama de Gantt">
+                  <button id="alejar-gantt" type="button" aria-label="Alejar Gantt">−</button><button id="restablecer-gantt" type="button">Ajustar</button><output id="escala-gantt" aria-live="polite">100%</output><button id="acercar-gantt" type="button" aria-label="Acercar Gantt">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="resumen-gantt">
+              <span><i class="muestra-gantt critica"></i> Actividad crítica esperada</span>
+              <span><i class="muestra-gantt normal"></i> Actividad con holgura</span>
+              <strong>Duración del escenario: <b id="duracion-gantt">—</b></strong>
+            </div>
+            <div id="gantt" class="gantt" tabindex="0" aria-label="Diagrama de Gantt desplazable del proyecto"></div>
+          </section>
+        </div>
+
+        <div id="panel-desarrollo" class="panel-pestana" role="tabpanel" aria-labelledby="pestana-desarrollo" hidden>
+          <section class="panel" aria-labelledby="titulo-desarrollo">
+            <div class="encabezado-panel encabezado-desarrollo">
+              <div><p class="sobretitulo">Procedimiento verificable</p><h2 id="titulo-desarrollo">Desarrollo paso a paso</h2><p class="descripcion-panel">Operaciones numéricas por actividad, en el mismo orden de la red.</p></div>
+              <div class="acciones-desarrollo"><button id="abrir-teoria" type="button" class="boton boton-terciario">Teoría y modelo</button></div>
+            </div>
+            <div id="desarrollo" class="desarrollo"></div>
+            <details class="resumen-solucion">
+              <summary>Tabla de tiempos y holguras</summary>
+              <div class="tabla-contenedor tabla-salida"><table class="tabla-resultados" aria-label="Tiempos y holguras por actividad"><thead><tr><th>Actividad</th><th>Descripción</th><th>Duración</th><th><abbr title="Inicio temprano">IT</abbr></th><th><abbr title="Fin temprano">FT</abbr></th><th><abbr title="Inicio tardío">ITa</abbr></th><th><abbr title="Fin tardío">FTa</abbr></th><th>Holgura</th><th>Estado</th></tr></thead><tbody id="resultados"></tbody></table></div>
+            </details>
+            <details class="resumen-solucion">
+              <summary>Interpretación del proyecto</summary>
+              <div id="interpretacion" class="interpretacion"></div>
+            </details>
+          </section>
+        </div>
+
+        <div class="resumen" aria-label="Indicadores principales del proyecto">
+          <article class="tarjeta-resumen tarjeta-destacada"><span>Duración total</span><strong id="duracion">—</strong><small>unidades de tiempo</small></article>
+          <article class="tarjeta-resumen"><span>Rutas críticas</span><strong id="cantidad-rutas">—</strong><small id="rutas-resumen">—</small></article>
+          <article class="tarjeta-resumen"><span>Act. críticas</span><strong id="cantidad-criticas">—</strong><small id="criticas">—</small></article>
+          <article id="tarjeta-pert" class="tarjeta-resumen tarjeta-pert" hidden><span id="rotulo-pert">Desviación</span><strong id="valor-pert">—</strong><small id="detalle-pert">—</small></article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <button id="teoria-flotante" class="teoria-flotante" type="button" aria-label="Abrir fundamentos y modelamiento matemático de PERT CPM">
+    <span aria-hidden="true">i</span><strong>Teoría y modelo</strong>
+  </button>
+
+  <dialog id="dialogo-carga" class="dialogo-carga">
+    <form method="dialog">
+      <div class="encabezado-dialogo"><div><p class="sobretitulo">Compatible con Excel</p><h2>Pegar rango de actividades</h2></div><button value="cancel" class="cerrar-dialogo" aria-label="Cerrar">×</button></div>
+      <p id="ayuda-carga" class="ayuda-carga"></p>
+      <label class="etiqueta-dialogo" for="datos-pegados">Filas copiadas</label>
+      <textarea id="datos-pegados" rows="9" spellcheck="false" aria-describedby="ayuda-carga"></textarea>
+      <p id="mensaje-carga" class="mensaje" role="alert"></p>
+      <div class="acciones-dialogo"><button value="cancel" class="boton boton-terciario">Cancelar</button><button id="importar-datos" value="default" type="button" class="boton boton-principal">Importar actividades</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="dialogo-teoria" class="dialogo-teoria">
+    <form method="dialog">
+      <div class="encabezado-dialogo"><div><p class="sobretitulo">Fundamentos teóricos y modelamiento matemático</p><h2>PERT–CPM: guía del modelo</h2></div><button value="cancel" class="cerrar-dialogo" aria-label="Cerrar guía">×</button></div>
+      <p class="introduccion-teoria">PERT–CPM representa un proyecto como una red dirigida de actividades y precedencias. Su propósito es estimar la duración, localizar las actividades que controlan el plazo y medir el margen disponible en las demás.</p>
+
+      <div class="secciones-teoria">
+        <details open>
+          <summary><span>1</span><div><strong>Fundamentos e historia</strong><small>Origen y propósito de CPM y PERT</small></div></summary>
+          <div class="contenido-seccion-teoria fundamentos-teoria">
+            <article><h3>CPM</h3><p>Trabaja con una duración conocida por actividad. Es apropiado cuando los tiempos son relativamente estables.</p></article>
+            <article><h3>PERT</h3><p>Usa tres estimaciones: optimista \(a\), más probable \(m\) y pesimista \(b\). Incorpora incertidumbre en la duración.</p></article>
+            <article><h3>Supuestos</h3><p>Las precedencias forman una red sin ciclos, cada actividad inicia cuando terminan todas sus predecesoras y las duraciones se expresan en la misma unidad.</p></article>
+            <article class="historia-metodo"><span>1957–1958</span><h3>Origen</h3><p>CPM surgió del trabajo de DuPont y Remington Rand para programar proyectos industriales. En paralelo, la Marina de Estados Unidos desarrolló PERT para planificar el programa Polaris.</p></article>
+          </div>
+        </details>
+
+        <details open>
+          <summary><span>2</span><div><strong>Formulación matemática</strong><small>Operaciones que completan el nodo 2 × 3</small></div></summary>
+          <div class="contenido-seccion-teoria">
+            <div class="modelo-nodo-formulas">
+              <div class="cadena-nodos-teoria" aria-label="Ejemplo de tres actividades consecutivas">
+                <div class="envoltura-nodo-teoria">
+                  <span class="rol-nodo-teoria">Predecesora</span>
+                  <div class="nodo-teoria nodo-contexto">
+                    <strong>A · Inicio</strong>
+                    <span data-celda="a-it"><small>Inicio temprano</small><b>0</b></span><span data-celda="a-d"><small>Duración</small><b>4</b></span><span data-celda="a-ft"><small>Fin temprano</small><b>4</b></span>
+                    <span data-celda="a-ita"><small>Inicio tardío</small><b>0</b></span><span data-celda="a-h"><small>Holgura</small><b>0</b></span><span data-celda="a-fta"><small>Fin tardío</small><b>4</b></span>
+                  </div>
+                </div>
+                <span class="flecha-nodos-teoria" aria-hidden="true">→</span>
+                <div class="envoltura-nodo-teoria nodo-analizado">
+                  <span class="rol-nodo-teoria">Actividad analizada</span>
+                  <div class="nodo-teoria nodo-formulacion" aria-label="Actividad B; pulse una casilla para mostrar su cálculo">
+                    <strong>B · Desarrollo</strong>
+                    <button type="button" class="celda-formula" data-celda="b-it" aria-describedby="explicacion-formula-nodo"><small>Inicio temprano</small><b>4</b></button>
+                    <button type="button" class="celda-formula" data-celda="b-d" aria-describedby="explicacion-formula-nodo"><small>Duración</small><b>5</b></button>
+                    <button type="button" class="celda-formula" data-celda="b-ft" aria-describedby="explicacion-formula-nodo"><small>Fin temprano</small><b>9</b></button>
+                    <button type="button" class="celda-formula" data-celda="b-ita" aria-describedby="explicacion-formula-nodo"><small>Inicio tardío</small><b>4</b></button>
+                    <button type="button" class="celda-formula" data-celda="b-h" aria-describedby="explicacion-formula-nodo"><small>Holgura</small><b>0</b></button>
+                    <button type="button" class="celda-formula" data-celda="b-fta" aria-describedby="explicacion-formula-nodo"><small>Fin tardío</small><b>9</b></button>
+                  </div>
+                </div>
+                <span class="flecha-nodos-teoria" aria-hidden="true">→</span>
+                <div class="envoltura-nodo-teoria">
+                  <span class="rol-nodo-teoria">Sucesora</span>
+                  <div class="nodo-teoria nodo-contexto">
+                    <strong>C · Cierre</strong>
+                    <span data-celda="c-it"><small>Inicio temprano</small><b>9</b></span><span data-celda="c-d"><small>Duración</small><b>3</b></span><span data-celda="c-ft"><small>Fin temprano</small><b>12</b></span>
+                    <span data-celda="c-ita"><small>Inicio tardío</small><b>9</b></span><span data-celda="c-h"><small>Holgura</small><b>0</b></span><span data-celda="c-fta"><small>Fin tardío</small><b>12</b></span>
+                  </div>
+                </div>
+              </div>
+              <div id="explicacion-formula-nodo" class="resumen-recorridos-nodo">
+                <article data-recorrido="adelante">
+                  <span>1</span>
+                  <div><h3>Hacia adelante: se suma</h3><p>El fin de A determina cuándo inicia B. Después se suma la duración de B para obtener su fin.</p><strong>\(IT_B=FT_A=4\)</strong><strong>\(FT_B=IT_B+d_B=4+5=9\)</strong></div>
+                </article>
+                <article data-recorrido="atras">
+                  <span>2</span>
+                  <div><h3>Hacia atrás: se resta</h3><p>El inicio tardío de C limita el fin tardío de B. Después se resta la duración de B.</p><strong>\(FTa_B=ITa_C=9\)</strong><strong>\(ITa_B=FTa_B-d_B=9-5=4\)</strong></div>
+                </article>
+              </div>
+            </div>
+            <p class="nota-modelo"><b>Holgura:</b> \(H_B=ITa_B-IT_B=4-4=0\); por ello B es crítica. <b>Duración del proyecto:</b> la última actividad termina en 12.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary><span>3</span><div><strong>Modelo probabilístico PERT</strong><small>Tiempo esperado, varianza y plazo objetivo</small></div></summary>
+          <div class="contenido-seccion-teoria">
+            <div class="rejilla-formulas-pert tres-formulas">
+              <article><small>Tiempo esperado</small><strong>\(t_{e_i}=\frac{a_i+4m_i+b_i}{6}\)</strong></article>
+              <article><small>Varianza de la actividad</small><strong>\(\sigma_i^2=\left(\frac{b_i-a_i}{6}\right)^2\)</strong></article>
+              <article><small>Ruta crítica</small><strong>\(\mu_R=\sum t_{e_i}\)</strong><strong>\(\sigma_R=\sqrt{\sum\sigma_i^2}\)</strong></article>
+              <article><small>Probabilidad del plazo</small><strong>\(Z=\frac{T_{obj}-\mu_R}{\sigma_R}\)</strong><strong>\(P(T\leq T_{obj})=\Phi(Z)\)</strong></article>
+            </div>
+            <p class="nota-modelo">La aproximación probabilística supone duraciones independientes y una distribución aproximadamente normal para el tiempo de la ruta analizada.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary><span>4</span><div><strong>Ejemplo de aplicación</strong><small>Un nodo resuelto paso a paso</small></div></summary>
+          <div class="contenido-seccion-teoria">
+            <section class="lectura-nodo" aria-labelledby="titulo-lectura-nodo">
+              <div class="nodo-teoria" aria-hidden="true">
+                <strong>A · Actividad</strong>
+                <span><small>Inicio temprano</small><b>4</b></span><span><small>Duración</small><b>5</b></span><span><small>Fin temprano</small><b>9</b></span>
+                <span><small>Inicio tardío</small><b>6</b></span><span><small>Holgura</small><b>2</b></span><span><small>Fin tardío</small><b>11</b></span>
+              </div>
+              <div><h3 id="titulo-lectura-nodo">Resultado del ejemplo</h3><p>La actividad comienza en 4 y termina en 9. Puede postergarse hasta comenzar en 6 y terminar en 11; por ello dispone de 2 unidades de holgura.</p></div>
+            </section>
+            <div class="reglas-teoria">
+              <article><b>1</b><div><h3>Programación temprana</h3><p>La actividad inicia cuando todas sus predecesoras han terminado. Después se suma su duración.</p><strong>\(4+5=9\)</strong></div></article>
+              <article><b>2</b><div><h3>Programación tardía</h3><p>Partiendo del fin permitido, se resta la duración para obtener el último inicio posible.</p><strong>\(11-5=6\)</strong></div></article>
+              <article><b>3</b><div><h3>Margen disponible</h3><p>Se comparan ambos inicios. La diferencia indica cuánto puede postergarse la actividad.</p><strong>\(6-4=2\)</strong></div></article>
+            </div>
+          </div>
+        </details>
+      </div>
+      <div class="acciones-dialogo"><button value="default" class="boton boton-principal">Cerrar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="dialogo-actividad" class="dialogo-teoria dialogo-actividad" aria-labelledby="titulo-dialogo-actividad">
+    <form method="dialog">
+      <div class="encabezado-dialogo"><div><p class="sobretitulo">Procedimiento del nodo</p><h2 id="titulo-dialogo-actividad">Detalle de la actividad</h2></div><button value="cancel" class="cerrar-dialogo" aria-label="Cerrar procedimiento">×</button></div>
+      <div id="contenido-dialogo-actividad" class="contenido-dialogo-actividad"></div>
+      <div class="acciones-dialogo"><button value="default" class="boton boton-principal">Cerrar</button></div>
+    </form>
+  </dialog>
+</body>
+</html>
