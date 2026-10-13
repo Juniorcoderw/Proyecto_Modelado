@@ -1,0 +1,39 @@
+:root{font-family:Arial,Helvetica,sans-serif;color:#172033;background:#f4f6fa}
+*{box-sizing:border-box}
+body{margin:0}
+.contenedor{width:min(1150px,calc(100% - 30px));margin:32px auto 75px}
+nav a{color:#3655a2;text-decoration:none;font-weight:600}
+header{margin:30px 0}
+.etiqueta{font-size:.78rem;color:#4160aa;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+h1{font-size:clamp(2rem,4vw,2.8rem);margin:8px 0}
+header>p:last-child,.ayuda{color:#5e6a7e;line-height:1.55}
+.panel{border:1px solid #dde4ef;background:white;border-radius:12px;padding:23px;margin-bottom:18px}
+.encabezado{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+h2{margin:0 0 18px;font-size:1.25rem}
+.encabezado h2{margin:0}
+label{font-size:.9rem;font-weight:600}
+select,input{font:inherit;border:1px solid #cbd5e1;border-radius:6px;padding:9px;background:white;color:inherit}
+select{display:block;margin-top:7px;min-width:215px}
+input{width:100%;min-width:75px}
+input.predecesoras{min-width:115px}
+.tabla-contenedor{overflow-x:auto;margin:16px 0}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #e3e9f2;padding:10px 8px;text-align:left;white-space:nowrap}
+th{background:#f4f6fa;font-size:.82rem;color:#37445a}
+td{font-size:.92rem}
+.acciones{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+button{background:#2f55a5;color:white;border:1px solid #2f55a5;border-radius:7px;padding:10px 15px;font:inherit;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(.95)}
+button.secundario{background:white;color:#2f55a5}
+button.eliminar{padding:7px 10px;background:white;border-color:#d6dce7;color:#a13b3b}
+#mensaje:not(:empty){padding-top:12px;color:#a13b3b;font-weight:600}
+.resumen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.resumen article{display:flex;flex-direction:column;gap:9px}
+.resumen span{color:#5e6a7e;font-size:.9rem}
+.resumen strong{font-size:1.55rem}
+.critica{background:#fff3ed}
+#desarrollo{line-height:1.65;color:#364154}
+#desarrollo p{margin:10px 0}
+.red{overflow:auto;min-height:100px}
+.red svg{display:block;min-width:600px;max-width:100%}
+@media(max-width:650px){.resumen{grid-template-columns:1fr}.panel{padding:14px}.acciones button{flex:1 1 auto}}
