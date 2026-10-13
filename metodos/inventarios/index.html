@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#102d27">
+  <title>Inventarios EOQ | Investigación Operativa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"]] },
+      svg: { fontCache: "global" },
+      startup: { typeset: false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+  <script src="inventarios.js" defer></script>
+</head>
+<body>
+  <header class="cabecera-aplicacion">
+    <a class="marca" href="../../index.html" aria-label="Volver al inicio">
+      <span class="marca-simbolo" aria-hidden="true">IO</span>
+      <span><strong>Investigación Operativa</strong><small>Laboratorio de modelado</small></span>
+    </a>
+    <nav aria-label="Navegación principal">
+      <a href="../../index.html">Inicio</a>
+      <a class="activo" href="../../index.html#calculadoras">Calculadoras</a>
+      <a href="../../index.html#proyecto">El proyecto</a>
+    </nav>
+    <span class="identificador-modulo">INVENTARIOS <b>·</b> EOQ</span>
+  </header>
+
+  <section class="cabecera-modulo">
+    <div>
+      <p class="etiqueta"><span></span> Política de abastecimiento</p>
+      <h1>INVENTARIOS <em>EOQ</em></h1>
+      <p>Determine cuánto pedir, cuándo hacerlo y cuánto cuesta mantener la política.</p>
+    </div>
+    <ol class="flujo" aria-label="Flujo de trabajo">
+      <li class="activo" data-paso="datos"><span>01</span> Datos</li>
+      <li data-paso="politica"><span>02</span> Política</li>
+      <li data-paso="analisis"><span>03</span> Análisis</li>
+    </ol>
+  </section>
+
+  <main class="espacio-trabajo">
+    <section class="panel panel-entrada" aria-labelledby="titulo-datos">
+      <div class="encabezado-panel">
+        <div>
+          <p class="sobretitulo">Parámetros del modelo</p>
+          <h2 id="titulo-datos">Datos del inventario</h2>
+          <p class="descripcion-panel">Use valores del mismo periodo. El cálculo se actualiza mientras escribe.</p>
+        </div>
+        <span class="indicador-guardado"><i></i> Guardado local</span>
+      </div>
+
+      <form id="formulario-inventario" novalidate>
+        <label class="campo campo-completo" for="modelo">Modelo
+          <select id="modelo" name="modelo">
+            <option value="eoq">EOQ · Demanda constante</option>
+            <option disabled>EOQ con faltantes · Próximamente</option>
+            <option disabled>EPQ · Próximamente</option>
+            <option disabled>Descuentos por cantidad · Próximamente</option>
+          </select>
+        </label>
+
+        <label class="campo campo-completo" for="producto">Producto o referencia
+          <input id="producto" name="producto" type="text" maxlength="70" placeholder="Ej. R&B Beverage Company" autocomplete="off">
+        </label>
+
+        <div class="rejilla-campos">
+          <label class="campo" for="demanda"><span class="rotulo-con-simbolo">Demanda anual <i class="simbolo-variable">D</i></span><span class="entrada-unidad"><input id="demanda" name="demanda" type="number" min="0" step="any" inputmode="decimal" placeholder="1200"><span>unid.</span></span></label>
+          <label class="campo" for="costo-pedido"><span class="rotulo-con-simbolo">Costo por pedido <i class="simbolo-variable">C<sub>o</sub></i></span><span class="entrada-unidad"><input id="costo-pedido" name="costoPedido" type="number" min="0" step="any" inputmode="decimal" placeholder="20"><span class="simbolo-moneda">S/</span></span></label>
+          <label class="campo" for="costo-unitario"><span class="rotulo-con-simbolo">Costo unitario <i class="simbolo-variable">C</i></span><span class="entrada-unidad"><input id="costo-unitario" name="costoUnitario" type="number" min="0" step="any" inputmode="decimal" placeholder="2"><span class="simbolo-moneda">S/</span></span></label>
+          <label class="campo" for="dias-laborables"><span class="rotulo-con-simbolo">Días laborables <i class="simbolo-variable">d<sub>a</sub></i></span><span class="entrada-unidad"><input id="dias-laborables" name="diasLaborables" type="number" min="1" step="1" inputmode="numeric" placeholder="240"><span>días</span></span></label>
+          <label class="campo" for="tiempo-entrega"><span class="rotulo-con-simbolo">Tiempo de entrega <i class="simbolo-variable">m</i></span><span class="entrada-unidad"><input id="tiempo-entrega" name="tiempoEntrega" type="number" min="0" step="any" inputmode="decimal" placeholder="5"><span>días</span></span></label>
+          <label class="campo" for="moneda">Moneda
+            <select id="moneda" name="moneda">
+              <option value="PEN">Soles · S/</option>
+              <option value="USD">Dólares · $</option>
+              <option value="EUR">Euros · €</option>
+            </select>
+          </label>
+          <label class="campo campo-completo" for="capacidad-maxima"><span class="rotulo-con-simbolo">Capacidad máxima <small>Opcional</small><i class="simbolo-variable">C<sub>máx</sub></i></span><span class="entrada-unidad"><input id="capacidad-maxima" name="capacidadMaxima" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 15000"><span>unid.</span></span></label>
+        </div>
+
+        <fieldset class="mantenimiento">
+          <legend>Costo anual de mantenimiento</legend>
+          <div class="selector-segmentado" role="radiogroup" aria-label="Forma de ingresar el mantenimiento">
+            <label><input type="radio" name="modoMantenimiento" value="unidad" checked><span>Por unidad</span></label>
+            <label><input type="radio" name="modoMantenimiento" value="porcentaje"><span>% del precio</span></label>
+          </div>
+          <label class="campo" for="mantenimiento"><span class="rotulo-con-simbolo"><span id="rotulo-mantenimiento">Costo por unidad al año</span><i id="simbolo-mantenimiento" class="simbolo-variable">C<sub>h</sub></i></span>
+            <span class="entrada-unidad"><input id="mantenimiento" name="mantenimiento" type="number" min="0" step="any" inputmode="decimal" placeholder="0.30"><span id="unidad-mantenimiento">S/</span></span>
+          </label>
+          <p id="ayuda-mantenimiento">Use el costo anual de conservar una unidad en inventario.</p>
+        </fieldset>
+
+        <div class="acciones-formulario">
+          <button id="cargar-ejemplo" class="boton boton-secundario" type="button">Ejemplo del docente</button>
+          <button id="limpiar" class="boton boton-terciario boton-peligro" type="button">Limpiar</button>
+        </div>
+
+        <p id="mensaje" class="mensaje" role="alert" aria-live="assertive"></p>
+        <button class="boton boton-principal" type="submit">Calcular política óptima <span>→</span></button>
+      </form>
+    </section>
+
+    <section class="area-analisis" aria-label="Análisis del inventario">
+      <div id="estado-vacio" class="estado-vacio">
+        <span class="paso-inicial">01</span>
+        <div><p class="sobretitulo">Nuevo análisis</p><h2>Ingrese los datos del producto</h2><p>Puede cargar el ejemplo del docente para explorar la política EOQ completa.</p></div>
+      </div>
+
+      <section id="salida" class="salida" hidden>
+        <div class="encabezado-resultados">
+          <div><p class="sobretitulo">Política recomendada</p><h2 id="titulo-resultado">Resultado del inventario</h2></div>
+          <div class="acciones-resultados">
+            <button id="abrir-guia" class="boton boton-terciario" type="button">Teoría y símbolos</button>
+            <button id="imprimir" class="boton boton-terciario" type="button">Imprimir informe</button>
+          </div>
+        </div>
+
+        <div class="resumen" aria-label="Indicadores principales">
+          <article class="tarjeta-resumen tarjeta-destacada"><span>Cantidad económica <i>Q*</i></span><strong id="lote-optimo">—</strong><small>unidades por pedido</small></article>
+          <article class="tarjeta-resumen"><span>Punto de reorden <i>r</i></span><strong id="punto-reorden">—</strong><small>unidades disponibles</small></article>
+          <article class="tarjeta-resumen"><span>Pedidos por año <i>N</i></span><strong id="numero-pedidos">—</strong><small id="pedidos-practicos">—</small></article>
+          <article class="tarjeta-resumen"><span>Tiempo entre pedidos <i>T</i></span><strong id="tiempo-ciclo">—</strong><small>días laborables</small></article>
+        </div>
+
+        <div id="recomendacion" class="recomendacion" aria-live="polite"></div>
+        <div id="evaluacion-capacidad" class="evaluacion-capacidad" aria-live="polite" hidden></div>
+
+        <div class="navegacion-pestanas" role="tablist" aria-label="Vistas del análisis">
+          <button class="pestana activo" id="pestana-politica" type="button" role="tab" aria-selected="true" aria-controls="panel-politica" data-panel="panel-politica">Política</button>
+          <button class="pestana" id="pestana-costos" type="button" role="tab" aria-selected="false" aria-controls="panel-costos" data-panel="panel-costos" tabindex="-1">Costos</button>
+          <button class="pestana" id="pestana-desarrollo" type="button" role="tab" aria-selected="false" aria-controls="panel-desarrollo" data-panel="panel-desarrollo" tabindex="-1">Desarrollo</button>
+          <button class="pestana" id="pestana-comparar" type="button" role="tab" aria-selected="false" aria-controls="panel-comparar" data-panel="panel-comparar" tabindex="-1">Comparar</button>
+        </div>
+
+        <div id="panel-politica" class="panel-pestana activo" role="tabpanel" aria-labelledby="pestana-politica">
+          <section class="panel panel-grafico">
+            <div class="encabezado-panel">
+              <div><p class="sobretitulo">Nivel de existencias</p><h2>Cuándo realizar cada pedido</h2></div>
+              <div class="acciones-grafico">
+                <div class="leyenda"><span><i class="muestra inventario"></i> Inventario</span><span><i class="muestra reorden"></i> Punto de pedido</span></div>
+                <label class="control-compacto" for="ciclos-grafico">Ciclos
+                  <select id="ciclos-grafico">
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div id="grafico-inventario" class="grafico" role="img" aria-label="Gráfico del nivel de inventario en el tiempo"></div>
+            <div id="lectura-grafico" class="lectura-grafico"></div>
+          </section>
+        </div>
+
+        <div id="panel-costos" class="panel-pestana" role="tabpanel" aria-labelledby="pestana-costos" hidden>
+          <div class="rejilla-costos">
+            <section class="panel panel-grafico">
+              <div class="encabezado-panel"><div><p class="sobretitulo">Curva económica</p><h2>Equilibrio de costos</h2></div><span class="sello-optimo">Mínimo en Q*</span></div>
+              <div id="grafico-costos" class="grafico grafico-costos" role="img" aria-label="Curvas anuales de pedido, mantenimiento y costo relevante"></div>
+              <section class="simulador-lote" aria-labelledby="titulo-simulador">
+                <div class="encabezado-simulador"><div><span>Comparación</span><h3 id="titulo-simulador">Probar otro tamaño de lote</h3></div><label for="lote-alternativo">Lote propuesto <span class="entrada-unidad"><input id="lote-alternativo" type="number" min="1" step="1"><span>unid.</span></span></label></div>
+                <input id="control-lote" class="control-rango" type="range" min="1" max="100" value="50" aria-label="Modificar lote alternativo">
+                <div class="resultado-simulacion" aria-live="polite">
+                  <div><span>Costo con este lote</span><strong id="costo-lote-alternativo">—</strong></div>
+                  <div><span>Diferencia frente a Q*</span><strong id="diferencia-lote">—</strong></div>
+                  <div><span>Impacto</span><strong id="impacto-lote">—</strong></div>
+                </div>
+              </section>
+            </section>
+            <section class="panel desglose-costos" aria-labelledby="titulo-desglose">
+              <div><p class="sobretitulo">Costo anual</p><h2 id="titulo-desglose">Desglose</h2></div>
+              <dl>
+                <div><dt>Pedidos al año <i>CP</i></dt><dd id="costo-ordenar">—</dd></div>
+                <div><dt>Retención al año <i>CR</i></dt><dd id="costo-mantener">—</dd></div>
+                <div class="fila-relevante"><dt>Costo anual EOQ <i>CT</i></dt><dd id="costo-relevante">—</dd></div>
+                <div><dt>Compra anual <i>CA</i></dt><dd id="costo-adquisicion">—</dd></div>
+                <div class="fila-total"><dt>Total con compra <i>CT + CA</i></dt><dd id="costo-total">—</dd></div>
+              </dl>
+            </section>
+          </div>
+        </div>
+
+        <div id="panel-desarrollo" class="panel-pestana" role="tabpanel" aria-labelledby="pestana-desarrollo" hidden>
+          <section class="panel panel-desarrollo">
+            <div class="encabezado-panel"><div><p class="sobretitulo">Procedimiento</p><h2>Desarrollo paso a paso</h2><p class="descripcion-panel">Se conserva la precisión durante el cálculo y se redondea únicamente al mostrar el resultado.</p></div></div>
+            <div id="desarrollo" class="desarrollo"></div>
+          </section>
+        </div>
+
+        <div id="panel-comparar" class="panel-pestana" role="tabpanel" aria-labelledby="pestana-comparar" hidden>
+          <section class="panel panel-comparacion">
+            <div class="encabezado-panel">
+              <div><p class="sobretitulo">Análisis de sensibilidad</p><h2>Compare escenarios</h2><p class="descripcion-panel">Pegue filas desde Excel o edite las celdas. (C_h) se expresa por unidad al año.</p></div>
+              <div class="acciones-resultados"><button id="pegar-escenarios" class="boton boton-terciario" type="button">Pegar tabla</button><button id="agregar-escenario" class="boton boton-secundario" type="button">Agregar escenario</button></div>
+            </div>
+            <div class="tabla-contenedor">
+              <table class="tabla-comparacion">
+                <thead><tr><th>Escenario</th><th>Demanda D</th><th>Pedido C<sub>o</sub></th><th>Mant. C<sub>h</sub></th><th>Q*</th><th>Pedidos/año</th><th>Costo anual EOQ</th><th></th></tr></thead>
+                <tbody id="escenarios"></tbody>
+              </table>
+            </div>
+            <div id="barras-escenarios" class="barras-escenarios" aria-label="Comparación visual de costos relevantes"></div>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <button id="teoria-flotante" class="teoria-flotante" type="button" aria-label="Abrir teoría y símbolos de inventarios">
+    <span class="teoria-icono" aria-hidden="true">i</span>
+    <strong>Teoría y símbolos</strong>
+  </button>
+
+  <dialog id="dialogo-guia" class="dialogo">
+    <div class="cabecera-dialogo"><div><p class="sobretitulo">Modelo EOQ</p><h2>Teoría y notación</h2></div><button class="cerrar-dialogo" type="button" aria-label="Cerrar">×</button></div>
+    <p class="introduccion-guia">El modelo determina la cantidad económica de pedido y el nivel de inventario en el que debe emitirse una nueva orden.</p>
+    <div class="contenido-guia">
+      <div class="preguntas-eoq">
+        <article><span>a</span><div><small>Cantidad económica de pedido</small><strong>\(Q^*=\sqrt{\frac{2DC_o}{C_h}}\)</strong><p>Equilibra el costo anual de pedidos y el costo anual de retención.</p></div></article>
+        <article><span>b</span><div><small>Punto de reorden</small><strong>\(d=\frac{D}{d_a},\quad r=dm\)</strong><p>Cubre la demanda diaria durante el tiempo de entrega.</p></div></article>
+      </div>
+      <section class="bloque-guia"><h3>Diccionario de símbolos</h3><div class="diccionario-simbolos">
+        <p><b>D</b><span>Demanda anual</span></p><p><b>C<sub>o</sub></b><span>Costo de emitir un pedido</span></p><p><b>C<sub>h</sub></b><span>Costo anual de retención por unidad</span></p><p><b>C</b><span>Costo unitario</span></p><p><b>I</b><span>Tasa anual de mantenimiento</span></p><p><b>m</b><span>Tiempo de entrega</span></p><p><b>d</b><span>Demanda diaria</span></p><p><b>d<sub>a</sub></b><span>Días laborables al año</span></p><p><b>N</b><span>Número de pedidos por año</span></p><p><b>T</b><span>Tiempo entre pedidos</span></p><p><b>r</b><span>Punto de reorden</span></p><p><b>Q*</b><span>Cantidad económica de pedido</span></p><p><b>C<sub>máx</sub></b><span>Capacidad máxima disponible</span></p>
+      </div></section>
+      <section class="bloque-guia"><h3>Supuestos para usar EOQ básico</h3><ul><li>Demanda conocida y constante.</li><li>Tiempo de entrega constante.</li><li>Reposición completa del lote.</li><li>Sin faltantes ni descuentos por cantidad.</li></ul></section>
+      <div class="nota-guia"><strong>Costos anuales</strong><p>\(CP=\frac{D}{Q^*}C_o\), \(CR=\frac{Q^*}{2}C_h\) y \(CT=CP+CR\). El costo de compra \(CA=DC\) se muestra aparte.</p></div>
+      <div class="nota-guia nota-redondeo"><strong>Criterio de redondeo</strong><p>La calculadora conserva todos los decimales durante el procedimiento y presenta la respuesta con dos decimales. Si un desarrollo manual trunca valores intermedios, puede diferir por algunas centésimas.</p></div>
+    </div>
+    <button class="boton boton-principal cerrar-dialogo" type="button">Cerrar</button>
+  </dialog>
+
+  <dialog id="dialogo-pegar" class="dialogo dialogo-pegar">
+    <div class="cabecera-dialogo"><div><p class="sobretitulo">Importación rápida</p><h2>Pegar escenarios desde Excel</h2></div><button class="cerrar-dialogo" type="button" aria-label="Cerrar">×</button></div>
+    <p>Orden de columnas: <strong>Escenario, Demanda, Costo por pedido, Mantenimiento por unidad</strong>.</p>
+    <textarea id="datos-pegados" rows="9" placeholder="Base&#9;1200&#9;20&#9;0.30&#10;Alta demanda&#9;1500&#9;20&#9;0.30"></textarea>
+    <div class="pie-dialogo"><button class="boton boton-terciario cerrar-dialogo" type="button">Cancelar</button><button id="importar-escenarios" class="boton boton-principal" type="button">Importar tabla <span>→</span></button></div>
+  </dialog>
+</body>
+</html>

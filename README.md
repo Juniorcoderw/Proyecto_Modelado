@@ -1,12 +1,13 @@
 # Investigación Operativa II — Métodos cuantitativos
 
-Aplicación web académica para resolver y analizar modelos de Investigación Operativa II. El primer módulo desarrollado es PERT–CPM.
+Aplicación web académica para resolver y analizar modelos de Investigación Operativa II. Incluye módulos interactivos de PERT–CPM e inventarios EOQ.
 
 ## Estado del proyecto
 
-- PERT–CPM: primera versión funcional en desarrollo.
-- Inventarios y teoría de decisiones: propuestos para etapas posteriores.
-- Validación formal contra los ejercicios y resultados de POM-QM: pendiente.
+- PERT–CPM: módulo funcional con cálculo CPM y PERT, desarrollo matemático y red AON.
+- Inventarios EOQ: módulo funcional con política de pedidos, punto de reorden, costos, gráficos y comparación de escenarios.
+- Teoría de decisiones: propuesta para una etapa posterior.
+- Pruebas realizadas: ruta única, rutas críticas múltiples, ciclos, ramas paralelas y varianza cero.
 
 ## Estructura
 
@@ -15,10 +16,14 @@ Aplicación web académica para resolver y analizar modelos de Investigación Op
 ├── index.html
 ├── estilos.css
 ├── metodos/
-│   └── pert-cpm/
+│   ├── pert-cpm/
+│   │   ├── index.html
+│   │   ├── estilos.css
+│   │   └── pert-cpm.js
+│   └── inventarios/
 │       ├── index.html
 │       ├── estilos.css
-│       └── pert-cpm.js
+│       └── inventarios.js
 ├── Proyecto Modelado/
 └── Proyecto_suma/
 ```
@@ -28,10 +33,10 @@ Los directorios `Proyecto Modelado` y `Proyecto_suma` son proyectos anteriores q
 ## Cómo ejecutar
 
 1. Descargue o clone el repositorio.
-2. Abra `index.html` en un navegador moderno.
-3. Seleccione el módulo **PERT / CPM**.
+2. Inicie un servidor estático en la raíz del proyecto; por ejemplo, `python -m http.server 8765`.
+3. Abra `http://127.0.0.1:8765` y seleccione el módulo que desea utilizar.
 
-También se puede abrir directamente `metodos/pert-cpm/index.html`. La aplicación inicial utiliza HTML, CSS y JavaScript, sin servidor ni dependencias externas.
+La aplicación utiliza HTML, CSS y JavaScript sin proceso de compilación. MathJax renderiza las expresiones matemáticas y Google Fonts proporciona las familias tipográficas de la interfaz.
 
 ## Módulo PERT–CPM
 
@@ -41,6 +46,7 @@ También se puede abrir directamente `metodos/pert-cpm/index.html`. La aplicaci�
 - Predecesoras inmediatas, separadas por comas.
 - CPM: una duración por actividad.
 - PERT: tiempos optimista, probable y pesimista.
+- Pegado de rangos copiados desde Excel e importación o exportación CSV/TSV.
 
 Los nombres de las actividades no pueden repetirse, las predecesoras deben existir y la red no puede contener ciclos.
 
@@ -69,32 +75,48 @@ Las actividades sin predecesoras comienzan en el instante cero. Las actividades 
 
 ### Resultados
 
+El análisis se organiza en tres vistas: Red del proyecto, Gantt y Solución. Solución reúne el desarrollo paso a paso y los bloques desplegables de tabla de tiempos e interpretación.
+
 - Duración calculada del proyecto.
 - Actividades críticas.
 - Tabla con inicios y fines tempranos y tardíos.
 - Holgura por actividad.
-- Desarrollo de las fórmulas de PERT y explicación de los recorridos.
-- Gráfico inicial de precedencias con actividades críticas resaltadas.
+- Enumeración de rutas críticas completas, incluidas rutas críticas múltiples.
+- Probabilidad PERT para un plazo objetivo y análisis por ruta.
+- Desarrollo de fórmulas PERT, recorridos y holguras renderizado con LaTeX.
+- Interpretación académica automática del resultado.
+- Red AON interactiva con nodos de seis casillas, conexiones y rutas críticas resaltadas.
+- Diagrama de Gantt para CPM y para los escenarios PERT esperado, optimista, más probable y pesimista.
 
-## Alcance y limitaciones de esta versión
+## Alcance estadístico
 
-La red utiliza actividades en nodos (AON). El gráfico organiza las actividades por niveles de precedencia y no pretende ser una copia del diagrama de POM-QM ni del formato de seis casillas utilizado en clase.
+La red utiliza actividades en nodos (AON) y organiza las actividades por niveles de precedencia. Cada nodo muestra inicio temprano, duración, fin temprano, inicio tardío, holgura y fin tardío.
 
-La identificación de actividades críticas no equivale todavía a enumerar todas las rutas críticas completas. La versión actual tampoco calcula la probabilidad de terminar antes de una fecha objetivo ni valida sus resultados automáticamente contra POM-QM.
+La probabilidad PERT se calcula mediante una aproximación normal para cada ruta crítica, sumando las varianzas de sus actividades. Cuando existen varias rutas críticas, sus duraciones pueden estar correlacionadas si comparten actividades; por eso el sistema informa las probabilidades por ruta y presenta una cota superior, no una probabilidad conjunta exacta.
 
-El ejemplo precargado es demostrativo y no corresponde a un ejercicio verificado del docente.
+El ejemplo precargado es demostrativo y puede reemplazarse mediante ingreso manual o pegado tabular.
 
 ## Organización del código
 
 Cada nuevo método tendrá su propia carpeta con `index.html`, `estilos.css` y un archivo JavaScript propio. Se priorizan identificadores en español y se evitan dependencias o carpetas adicionales mientras no sean necesarias.
 
+## Módulo de inventarios EOQ
+
+El modelo determinístico calcula el lote económico, número de pedidos, tiempo entre pedidos, inventario promedio, punto de reorden y costos anuales. El mantenimiento puede ingresarse como costo por unidad o como porcentaje del precio.
+
+La herramienta incluye una gráfica de reposición con cantidad de ciclos configurable, curva de costos con simulador de lotes alternativos, desarrollo matemático con LaTeX, interpretación automática y una tabla compatible con datos pegados desde Excel para comparar escenarios. Los cálculos conservan su precisión interna y el redondeo se aplica únicamente en la presentación.
+
+## Preparación para despliegue
+
+El proyecto es estático y puede desplegarse directamente desde la raíz del repositorio en Vercel, sin comando de compilación. Antes del despliegue final se debe verificar la carga de MathJax y Google Fonts desde la red de producción.
+
 ## Próximos pasos
 
-1. Validar los cálculos de CPM y PERT con casos de la guía del curso.
-2. Mejorar la red para representar nodos de seis casillas y resaltar las rutas críticas completas.
-3. Incorporar las probabilidades PERT cuando el ejercicio lo requiera.
-4. Verificar la interfaz en distintas resoluciones de pantalla.
-5. Continuar con los módulos de inventarios y teoría de decisiones.
+1. Contrastar ejemplos adicionales de inventarios con los resultados esperados de POM-QM.
+2. Incorporar EOQ con faltantes, EPQ y descuentos por cantidad.
+3. Realizar la revisión final de contenido y accesibilidad.
+4. Desplegar la rama aprobada en Vercel.
+5. Continuar con el módulo de teoría de decisiones.
 
 ## Referencia académica
 
